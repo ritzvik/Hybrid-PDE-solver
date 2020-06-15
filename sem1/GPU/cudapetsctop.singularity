@@ -1,0 +1,21 @@
+Bootstrap: localimage
+From: cudapetscbase.simg
+
+%files
+    petsc-3.10.5.tar.gz
+
+
+%post
+    mkdir /petsc_dir/
+    touch /petsc_dir/test.txt
+    tar xvzf /petsc-3.10.5.tar.gz -C /petsc_dir/
+
+    petsc_directory=/petsc_dir/petsc-3.10.5/
+
+
+    cd $petsc_directory
+    sed -i '1s/^/NVCCFLAGS += -Xcompiler -openmp\nNVCCFLAGS += -Xcompiler -fopenmp\n/' makefile
+    ./configure --with-cuda=1 --with-precision=single --with-clanguage=c --download-cusp
+    make all test
+    cp -r ./lib/petsc /lib
+    cd /
