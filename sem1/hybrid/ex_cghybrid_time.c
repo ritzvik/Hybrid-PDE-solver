@@ -1,3 +1,11 @@
+/*
+
+Same code as that of cg_hybrid_thread.c.
+Each function is seperately timed.
+
+*/
+
+
 static char help[] = "Implementation of conjugate Gradient\n\n";
 
 #include <petscksp.h>

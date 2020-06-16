@@ -1,10 +1,22 @@
 /*
 
+Hybrid implementation as discussed in the presentation(not in the report)
+The A matrix is divided into four parts, 2 handled by CPU and 2 by GPU and vector b is divided into 2 parts.
+each handled by a CPU and GPU. 
+Threads are created to place calls conccurrently to both GPU and GPU so that neither of them would have to wait for other to finish.
+
+
+Parameters(flags) are:
+  1. -iters for number of iteartion of conjugate gradient method.
+  2. -n for size of vector/matrix
+  3. -div for division ratio of no. of indices to be handled by CPU and GPU
+      For eaxmple, ``-div 0.2`` denotes that 20% of the workload is handled by CPU and 80% by GPU
+  4. -print : Set this to 1 if result needs to be printed.
 
 */
 
 
-static char help[] = "Implementation of conjugate Gradient\n\n";
+static char help[] = "Implementation of conjugate Gradient in hybrid fashion\n\n";
 
 #include <petscksp.h>
 #include <time.h>
@@ -13,7 +25,11 @@ static char help[] = "Implementation of conjugate Gradient\n\n";
 
 
 
+// Hybridization of VecAXPY : y = alpha*x + y
+// see documentation of function for more information
 typedef struct {
+    // struct is necessary to encapsulated all the required values into a single structure
+    // as pthread_create does not handle multiple parameters
     Vec y;
     PetscScalar alpha;
     Vec x;
@@ -21,25 +37,29 @@ typedef struct {
 
 void* VecAXPY_thread(void* ptr){
     VecAXPY_struct *sptr = (VecAXPY_struct*)ptr;
-    VecAXPY(sptr->y, sptr->alpha, sptr->x);
+    VecAXPY(sptr->y, sptr->alpha, sptr->x);  // calling the PETSc function VecAXPY
     return NULL;
 }
-void VecAXPY_split(Vec y1, Vec y2, PetscReal alpha, Vec x1, Vec x2){
+void VecAXPY_split(Vec y1, Vec y2, PetscReal alpha, Vec x1, Vec x2){  // x1,x2 and y1,y2 are parts of the same vector x and y, 
+    // x1,y1 are handled by CPU, x2,y2 are handled by GPU
     VecAXPY_struct s1 = {y1, alpha, x1};
     VecAXPY_struct s2 = {y2, alpha, x2};
     pthread_t id1, id2;
 
+    // creating threads each for CPU and GPU process
     pthread_create(&id1, NULL, VecAXPY_thread, (void*)(&s1));
     pthread_create(&id2, NULL, VecAXPY_thread, (void*)(&s2));
 
+    //waiting for both threads to finish
     pthread_join(id1, NULL);
     pthread_join(id2, NULL);
+
     return;
 }
 
 
 
-
+// hybridization of MatMult
 typedef struct{
     Mat mat;
     Vec x;
@@ -53,11 +73,14 @@ void* MatMult_thread(void* ptr){
 }
 
 void MatMult_split(Mat A11, Mat A12, Mat A21, Mat A22, Vec x1, Vec x2, Vec b1, Vec b2, Vec b1_, Vec b2_){
+    // CPU : A11, A21, x1, b1, b2
+    // GPU : A12, A22, x2, b1_, b2_
+    // b1_ and b2_ are temporary storage as they are ultimately added to b1 and b2 (refer to the presentation)
     MatMult_struct s11 = {A11, x1, b1};
     MatMult_struct s12 = {A12, x2, b1_};
     MatMult_struct s21 = {A21, x1, b2};
     MatMult_struct s22 = {A22, x2, b2_};
-    VecAXPY_struct s1 = {b1, (PetscScalar)1.0, b1_};
+    VecAXPY_struct s1 = {b1, (PetscScalar)1.0, b1_}; // adding b1 and b1_
     VecAXPY_struct s2 = {b2, (PetscScalar)1.0, b2_};
     pthread_t t11, t12, t21, t22, t1, t2;
 
