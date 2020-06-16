@@ -26,7 +26,9 @@ on both CPU & GPU.
 
 ## ex_cg.c
 The file contains a parallelized implementation of conjugate gradient method as described in the report.
-The file is commented as requiered for explanation
+The file is commented as requiered for explanation.
+
+This code can be used to benchmark naive conjugate gradient method on both CPU and GPU individually.
 
 ## makefile
 This is used to compile C codes into executables files. 
