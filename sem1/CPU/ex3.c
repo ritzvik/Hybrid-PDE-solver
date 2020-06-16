@@ -41,8 +41,8 @@ int main(int argc,char **args)
      processor for the interior part of the mesh. We let PETSc decide
      above. */
 
-  ierr = VecGetOwnershipRange(x,&rstart,&rend);CHKERRQ(ierr);
-  ierr = VecGetLocalSize(x,&nlocal);CHKERRQ(ierr);
+  ierr = VecGetOwnershipRange(x,&rstart,&rend);CHKERRQ(ierr);  // each core is allocated intices from ``rstart`` to ``rend``
+  ierr = VecGetLocalSize(x,&nlocal);CHKERRQ(ierr);  // number of indices allocated to each core is ``nlocal``
 
   /*
      Create matrix.  When using MatCreate(), the matrix format can
@@ -56,7 +56,7 @@ int main(int argc,char **args)
      to have the same parallel layout as the vector created above.
   */
   ierr = MatCreate(PETSC_COMM_WORLD,&A);CHKERRQ(ierr);
-  ierr = MatSetSizes(A,nlocal,nlocal,n,n);CHKERRQ(ierr);
+  ierr = MatSetSizes(A,nlocal,nlocal,n,n);CHKERRQ(ierr);  // Total matrix of size nXn, while each core allocated nlocalXnlocal
   ierr = MatSetFromOptions(A);CHKERRQ(ierr);
   ierr = MatSetUp(A);CHKERRQ(ierr);
 
@@ -71,6 +71,7 @@ int main(int argc,char **args)
   */
 
 
+   // each core is required to only fill the indices allocated to it.
   if (rstart==0) {
     rstart = 1;
     i      = 0; col[0] = 0; col[1] = 1; value[0] = 2.0; value[1] = -1.0;
@@ -88,6 +89,7 @@ int main(int argc,char **args)
     col[0] = i-1; col[1] = i; col[2] = i+1;
     ierr   = MatSetValues(A,1,&i,3,col,value,INSERT_VALUES);CHKERRQ(ierr);
   }
+  // inserting values into a tridiagonal matrix ends here.
 
   /* Assemble the matrix */
   ierr = MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
