@@ -3,6 +3,8 @@ From: cudapetsc.simg
 
 %post
 
+    apt -y install libssl-dev libncurses5-dev libsqlite3-dev libreadline-dev libtk8.6 libgdm-dev libdb4o-cil-dev libpcap-dev
+
     # replace python 3.5 with python 3.6
     cd /
     wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
@@ -21,13 +23,14 @@ From: cudapetsc.simg
     cd /
     rm -r Python-3.6*
     python3 --version
-    apt -y install python3-distutils
+    python3 -m pip install numpy
+    python3 -m pip install six matplotlib mpi4py cycler dateutil tz pyparsing
+    apt -y install python3-pil
 
     # get pip for python2 also
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py || echo "curl failed"
     python2 get-pip.py || echo "script failed"
-    pip2 install numpy
-    pip3 install numpy
+    python2 -m pip install numpy
 
     # resetting PETSc environment
     mkdir /petsc
@@ -36,7 +39,7 @@ From: cudapetsc.simg
     export PETSC_DIR=/petsc
 
     # cloning fluidity
-    git clone --depth 2 --single-branch --branch c6c026d https://github.com/FluidityProject/fluidity
+    git clone --depth 2 https://github.com/FluidityProject/fluidity
     mkdir /fluidity/lib
     mkdir /fluidity/lib64
     mkdir /fluidity/bin
