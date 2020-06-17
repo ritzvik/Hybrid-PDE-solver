@@ -23,8 +23,9 @@ From: cudapetsc.simg
     cd /
     rm -r Python-3.6*
     python3 --version
+    python3 -m pip install --upgrade pip
     python3 -m pip install numpy
-    python3 -m pip install six matplotlib mpi4py cycler dateutil tz pyparsing
+    python3 -m pip install six matplotlib mpi4py cycler python-dateutil tz pyparsing
     apt -y install python3-pil
 
     # get pip for python2 also
