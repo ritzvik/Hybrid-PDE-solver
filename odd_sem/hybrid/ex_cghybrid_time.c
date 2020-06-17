@@ -171,7 +171,7 @@ int main(int argc, char **args){
     Vec x1, x2, b1, aux1, b2, aux2, u1, u2, r1, r2, p1, p2, Ap1, Ap2;
     Mat A11, A12, A21, A22;
     PetscReal alpha, beta, rdot, pAp, val,norm1,norm2, CGdiv = 0.2;
-    PetscInt n=10,n1,n2, col[3], rstart1, rend1, nlocal1, rstart2, rend2, nlocal2, i, iters = 100;
+    PetscInt n=100,n1,n2, col[3], rstart1, rend1, nlocal1, rstart2, rend2, nlocal2, i, iters = 100;
     PetscScalar one=1.0, minusone=-1.0, zero=0.0, value[3];
     PetscBool printflg;
 

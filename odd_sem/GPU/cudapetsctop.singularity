@@ -15,7 +15,7 @@ From: cudapetscbase.simg
 
     cd $petsc_directory
     sed -i '1s/^/NVCCFLAGS += -Xcompiler -openmp\nNVCCFLAGS += -Xcompiler -fopenmp\n/' makefile
-    ./configure --with-cuda=1 --with-precision=single --with-clanguage=c --download-cusp
+    ./configure --with-cuda=1 --with-precision=double --with-clanguage=c --download-cusp
     make all test
     cp -r ./lib/petsc /lib
     cd /
