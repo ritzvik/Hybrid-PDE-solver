@@ -3,7 +3,8 @@ From: cudapetsc.simg
 
 %post
 
-    apt -y install libssl-dev libncurses5-dev libsqlite3-dev libreadline-dev libtk8.6 libgdm-dev libdb4o-cil-dev libpcap-dev
+    apt -y install libssl-dev libncurses5-dev libsqlite3-dev libreadline-dev libgdm-dev libdb4o-cil-dev libpcap-dev tcl8.6 tk8.6
+    apt -y install cmake cmake-curses-gui
 
     # replace python 3.5 with python 3.6
     cd /
@@ -26,7 +27,6 @@ From: cudapetsc.simg
     python3 -m pip install --upgrade pip
     python3 -m pip install numpy
     python3 -m pip install six matplotlib mpi4py cycler python-dateutil tz pyparsing
-    apt -y install python3-pil
 
     # get pip for python2 also
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py || echo "curl failed"
@@ -49,14 +49,17 @@ From: cudapetsc.simg
     export WORKING=""
     export PATH="$WORKING/fluidity/bin:$PATH"
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$WORKING/fluidity/lib:$WORKING/fluidity/lib64"
+    export CFLAGS="-L$WORKING/fluidity/lib -L$WORKING/fluidity/lib64"
+    export FFLAGS="-L$WORKING/fluidity/lib -L$WORKING/fluidity/lib64"
+    export CPPFLAGS="-I$WORKING/fluidity/include"
+    export LDFLAGS="-L$WORKING/fluidity/lib -L$WORKING/fluidity/lib64"
 
 
-    # install vtk7
+    # install vtk5.8
     cd /
-    echo "deb http://ppa.launchpad.net/elvstone/vtk7/ubuntu xenial main" >> /etc/apt/sources.list.d/vtk7.list
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 2575723FDC155316749C9FEE583AA605C50FBDDA
-    apt update
-    apt -y install vtk7
+    git clone --depth 2 --single-branch --branch v5.8.0 https://gitlab.kitware.com/vtk/vtk.git
+    cd /vtk
+    cmake . || echo "vtk cmake failed"
 
     # install parmetis
     wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/parmetis/OLD/ParMetis-3.1.1.tar.gz
@@ -70,6 +73,6 @@ From: cudapetsc.simg
 
     # installing fluidity
     
-    # cd /fluidity
-    # ./configure
-    # make
+    cd /fluidity
+    ./configure --enable-sam || echo "fluidity config failed"
+    make || echo "fluidity make failed"
