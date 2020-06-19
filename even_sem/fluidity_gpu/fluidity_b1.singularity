@@ -1,0 +1,31 @@
+Bootstrap: localimage
+From: fluidity_b0.simg
+
+
+%post
+
+    ## Install gpg
+    apt-get -y install gnupg dirmngr
+
+    ## add ppa
+    echo "deb http://ppa.launchpad.net/fluidity-core/ppa/ubuntu bionic main" > /etc/apt/sources.list.d/fluidity-core-ppa-bionic.list
+    gpg --keyserver keyserver.ubuntu.com --recv 0D45605A33BAC3BE
+    gpg --export --armor 33BAC3BE | apt-key add -
+    apt-get update
+
+    ## Set timezone
+    echo "Europe/London" > /etc/timezone
+
+    # install fluidity dependencies
+    apt-get -y install fluidity-dev
+
+    ## set environment options
+    # export PATH="${PATH}:/usr/local/texlive/2019/bin/x86_64-linux"' >>$SINGULARITY_ENVIRONMENT
+    echo 'export PETSC_DIR="/usr/lib/petscdir/3.8.3"' >>$SINGULARITY_ENVIRONMENT
+    echo 'export LD_LIBRARY_PATH="/usr/lib/petscdir/3.8.3/linux-gnu-c-opt/lib"' >>$SINGULARITY_ENVIRONMENT
+    echo 'export LDFLAGS="-L/usr/lib/x86_64-linux-gnu/hdf5/openmpi"' >>$SINGULARITY_ENVIRONMENT
+    echo 'export CPPFLAGS="-I/usr/include/hdf5/openmpi"' >>$SINGULARITY_ENVIRONMENT
+    echo 'export OMPI_MCA_btl_vader_single_copy_mechanism="none"' >>$SINGULARITY_ENVIRONMENT
+    $(cat $SINGULARITY_ENVIRONMENT)
+
+    cd /

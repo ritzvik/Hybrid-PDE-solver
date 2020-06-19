@@ -1,0 +1,53 @@
+Bootstrap: docker
+From: nvidia/cuda:10.0-devel-ubuntu18.04
+
+%post
+
+        
+    ## set some variables specific to cuda
+    echo "export DEBIAN_FRONTEND=noninteractive" >>$SINGULARITY_ENVIRONMENT
+    echo "export PATH=/usr/local/cuda-10.0/bin:$PATH" >>$SINGULARITY_ENVIRONMENT
+    echo "export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64:$LD_LIBRARY_PATH" >>$SINGULARITY_ENVIRONMENT
+    echo "export LD_LIBRARY_PATH=/usr/lib64/nvidia:$LD_LIBRARY_PATH" >>$SINGULARITY_ENVIRONMENT
+    $(cat $SINGULARITY_ENVIRONMENT)
+
+    mkdir -p /usr/lib64/nvidia
+
+    ## check for nvcc
+    nvcc --version
+
+    ## change ubuntu repositories mirror to Japan (faster downloads)
+    sed -i 's|http://archive.ubuntu|http://jp.archive.ubuntu|g' /etc/apt/sources.list
+    sed -i 's|https://archive.ubuntu|https://jp.archive.ubuntu|g' /etc/apt/sources.list
+
+    ## Some essentials for PETSc
+    apt -y update
+    apt -y install git wget python g++ gcc gfortran curl
+    apt -y install mpich libblas-dev liblapack-dev 
+    apt -y install build-essential valgrind
+    apt -y install python3 python3-distutils
+
+    ## Get pip for python3
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py || echo "curl failed"
+    python3 get-pip.py || echo "get-pip script failed"
+    rm get-pip.py || echo "get-pip removal failed"
+    python3 -m pip install --upgrade pip || echo "pip upgrade failed"
+
+    ## petsc GPU installation
+
+    ## download PETSc source
+    mkdir /installs
+    cd /installs
+    wget http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.8.4.tar.gz
+
+    ## install PETSc with GPU support
+    tar xvzf ./petsc-3.8.4.tar.gz -C ./
+
+    cd ./petsc-3.8.4
+    sed -i '1s/^/NVCCFLAGS += -Xcompiler -openmp\nNVCCFLAGS += -Xcompiler -fopenmp\n/' makefile
+    ./configure --with-cuda=1 --with-precision=double --with-clanguage=c --download-cusp
+    make all test || echo "make and tests failed"
+    # cp -r ./lib/petsc /lib || echo "copy petsc to lib failed"
+    cd /
+
+    
