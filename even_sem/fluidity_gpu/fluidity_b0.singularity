@@ -35,9 +35,13 @@ From: nvidia/cuda:10.0-devel-ubuntu18.04
 
     ## petsc GPU installation
 
-    ## download PETSc source
     mkdir /installs
+
+
+    ## petsc-3.8.4
     cd /installs
+
+    ## download PETSc source
     wget http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.8.4.tar.gz
 
     ## install PETSc with GPU support
@@ -45,9 +49,38 @@ From: nvidia/cuda:10.0-devel-ubuntu18.04
 
     cd ./petsc-3.8.4
     sed -i '1s/^/NVCCFLAGS += -Xcompiler -openmp\nNVCCFLAGS += -Xcompiler -fopenmp\n/' makefile
-    ./configure --with-cuda=1 --with-precision=double --with-clanguage=c --download-cusp
+    ./configure --with-cuda=1 --with-precision=double --with-clanguage=c --download-cusp || echo "configure for petsc-3.8.4 failed"
     make all test || echo "make and tests failed"
-    # cp -r ./lib/petsc /lib || echo "copy petsc to lib failed"
     cd /
 
-    
+
+    ## petsc-3.9.4
+    cd /installs
+
+    ## download PETSc source
+    wget http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.9.4.tar.gz
+
+    ## install PETSc with GPU support
+    tar xvzf ./petsc-3.9.4.tar.gz -C ./
+
+    cd ./petsc-3.9.4
+    sed -i '1s/^/NVCCFLAGS += -Xcompiler -openmp\nNVCCFLAGS += -Xcompiler -fopenmp\n/' makefile
+    ./configure --with-cuda=1 --with-precision=double --with-clanguage=c --download-cusp || echo "configure for petsc-3.9.4 failed"
+    make all test || echo "make and tests failed"
+    cd /
+
+
+    ## petsc-3.10.5
+    cd /installs
+
+    ## download PETSc source
+    wget http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.10.5.tar.gz
+
+    ## install PETSc with GPU support
+    tar xvzf ./petsc-3.10.5.tar.gz -C ./
+
+    cd ./petsc-3.10.5
+    sed -i '1s/^/NVCCFLAGS += -Xcompiler -openmp\nNVCCFLAGS += -Xcompiler -fopenmp\n/' makefile
+    ./configure --with-cuda=1 --with-precision=double --with-clanguage=c --download-cusp || echo "configure for petsc-3.10.5 failed"
+    make all test || echo "make and tests failed"
+    cd /
