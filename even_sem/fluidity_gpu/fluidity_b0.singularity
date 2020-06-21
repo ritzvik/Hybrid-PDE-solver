@@ -63,8 +63,8 @@ From: nvidia/cuda:10.0-devel-ubuntu18.04
         --download-scalapack=yes \
         --download-mumps=yes --download-hypre=yes \
         --download-suitesparse=yes --download-ml=yes --with-fortran-interfaces || echo "petsc configure failed"
-    make all test || echo "make and tests failed"
+    make all test || echo "*********************************make and tests failed*********************************"
 
-    cp -r ./lib/petsc /lib || echo "PETSc lib copy failed"
+    cp -r ./lib/petsc /lib || echo "****************************************PETSc lib copy failed*********************************"
     cd /
     apt clean

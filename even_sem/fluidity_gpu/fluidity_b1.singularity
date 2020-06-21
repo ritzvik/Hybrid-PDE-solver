@@ -4,18 +4,23 @@ From: fluidity_b0.simg
 
 %post
 
-    ## Install gpg
+    # Install gpg
     apt -y update
     apt-get -y install gnupg dirmngr
 
-    ## add ppa
+    # add ppa
     echo "deb http://ppa.launchpad.net/fluidity-core/ppa/ubuntu bionic main" > /etc/apt/sources.list.d/fluidity-core-ppa-bionic.list
     gpg --keyserver keyserver.ubuntu.com --recv 0D45605A33BAC3BE
     gpg --export --armor 33BAC3BE | apt-key add -
     apt-get update
 
+    export DEBIAN_FRONTEND=noninteractive
+
+    ln -fs /usr/share/zoneinfo/Aisa/Colombo /etc/localtime
+    apt-get install -y tzdata
+
     ## Set timezone
-    echo "Europe/London" > /etc/timezone
+    #echo "Aisa/Colombo" > /etc/timezone
 
     # install fluidity dependencies
     apt-get -y install fluidity-dev

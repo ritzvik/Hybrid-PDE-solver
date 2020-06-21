@@ -1,5 +1,0 @@
-Bootstrap: localimage
-From: fluidity_b1.simg
-
-%post
-    echo "empty"
