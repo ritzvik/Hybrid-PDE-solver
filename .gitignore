@@ -56,4 +56,4 @@ dkms.conf
 *.img
 
 # special concessions
-scratch_*/
+scratch*/
