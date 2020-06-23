@@ -21,7 +21,7 @@ From: nvidia/cuda:10.0-devel-ubuntu18.04
 
     ## Some essentials for PETSc
     apt -y update
-    apt -y install git wget python g++ gcc gfortran curl
+    apt -y install git wget python g++ gcc gfortran curl vim
 
     ## download PETSc source
     mkdir /installs
