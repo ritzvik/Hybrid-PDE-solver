@@ -63,8 +63,21 @@ From: nvidia/cuda:10.0-devel-ubuntu18.04
         --download-scalapack=yes \
         --download-mumps=yes --download-hypre=yes \
         --download-suitesparse=yes --download-ml=yes --with-fortran-interfaces || echo "petsc configure failed"
-    make all test || echo "*********************************make and tests failed*********************************"
+    make all test || echo "*****make and tests failed*****"
 
-    cp -r ./lib/petsc /lib || echo "****************************************PETSc lib copy failed*********************************"
+
+    ## include VECCUDA VecType(s) for fortran
+    cd ./include/petsc/finclude/
+    head -n 29 petscvec.h > tempfile
+    printf \
+        "\n#define VECCUDA 'cuda'\n#define VECSEQCUDA 'seqcuda'\n#define VECMPICUDA 'mpicuda'\n" \
+        >> tempfile
+    tail -n +30 petscvec.h >> tempfile
+    mv tempfile petscvec.h
+    cd ../../../
+
+    cp -r ./lib/petsc /lib || echo "*****PETSc lib copy failed*****"
+
+    ## final steps of singularity
     cd /
     apt clean
