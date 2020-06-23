@@ -58,7 +58,7 @@ singularity exec cudapetsc.simg make ex_cg
 ## Running the code on GPU
 
   ```
-  singularity exec --nv cudapetsc.simg ./ex_cg --vec_type cuda --mat_type aijcusparse -n 100 -iter 100
+  singularity exec --nv cudapetsc.simg ./ex_cg -vec_type cuda -mat_type aijcusparse -n 100 -iter 100
   ```
 
 
