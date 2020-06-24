@@ -44,7 +44,7 @@ From: ubuntu:bionic
 
     ## build and test fluidity
     ./configure --enable-2d-adaptivity
-    make makefiles
+    make makefiles || echo "may fail, no need to worry!"
     make -j
     make -j fltools
 
