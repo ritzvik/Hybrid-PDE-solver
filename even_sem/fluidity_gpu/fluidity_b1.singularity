@@ -16,11 +16,11 @@ From: fluidity_b0.simg
 
     export DEBIAN_FRONTEND=noninteractive
 
-    ln -fs /usr/share/zoneinfo/Aisa/Colombo /etc/localtime
+    ln -fs /usr/share/zoneinfo/Aisa/Calcutta /etc/localtime
     apt-get install -y tzdata
 
     ## Set timezone
-    #echo "Aisa/Colombo" > /etc/timezone
+    #echo "Aisa/Calcutta" > /etc/timezone
 
     # install fluidity dependencies
     apt-get -y install fluidity-dev
@@ -28,6 +28,7 @@ From: fluidity_b0.simg
     ## set environment options
     $(cat $SINGULARITY_ENVIRONMENT)
     echo "export PETSC_DIR=/installs/petsc-3.10.5" >>$SINGULARITY_ENVIRONMENT
+    echo "export PATH=/installs/petsc-3.10.5/arch-linux2-c-debug/bin:$PATH" >>$SINGULARITY_ENVIRONMENT
     echo "export LD_LIBRARY_PATH=/installs/petsc-3.10.5/arch-linux2-c-debug/lib:/usr/lib/petscdir/3.8.3/linux-gnu-c-opt/lib:$LD_LIBRARY_PATH" >>$SINGULARITY_ENVIRONMENT
     echo 'export LDFLAGS="-L/usr/lib/x86_64-linux-gnu/hdf5/openmpi"' >>$SINGULARITY_ENVIRONMENT
     echo 'export CPPFLAGS="-I/usr/include/hdf5/openmpi"' >>$SINGULARITY_ENVIRONMENT
