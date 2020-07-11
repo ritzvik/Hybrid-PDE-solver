@@ -1,4 +1,4 @@
-This ection meainly deals with installing fluidity in a containerized environment,
+This section meainly deals with installing fluidity in a containerized environment,
 and our attempt at running fluidity on GPU
 
 Before going into codebase, it is highly recommended to go through the final report or presentation.
